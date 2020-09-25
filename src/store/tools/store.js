@@ -14,6 +14,7 @@ export default {
     modules: [],
     payees: [],
     payeeGroup: [],
+    reports: [],
     staledChecks: [],
     status: [],
     transmittals: [],
@@ -52,6 +53,9 @@ export default {
     },
     payeeGroup(state, payload) {
       state.payeeGroup = payload
+    },
+    reports(state, payload) {
+      state.reports = payload
     },
     status(state, payload) {
       state.status = payload
@@ -152,6 +156,14 @@ export default {
       try {
         const res = await Axios.get('/tools/modules')
         context.commit('modules', res.data)
+      } catch (error) {
+        throw error
+      }
+    },
+    async getReports(context) {
+      try {
+        const res = await Axios.get('/tools/reports')
+        context.commit('reports', res.data)
       } catch (error) {
         throw error
       }
@@ -269,6 +281,26 @@ export default {
       } catch (error) {
         throw error
       }
+    },
+    async getMasterlistReportTools(context) {
+      try {
+        const url =
+          '/tools/' +
+          context.rootGetters['tools/company'].code +
+          '/report/masterlist'
+
+        const res = await Axios.get(url)
+
+        context.commit('accounts', res.data.accounts)
+        context.commit('payees', res.data.payees)
+        context.commit('transmittals', res.data.transmittals)
+        context.commit('status', res.data.status)
+        context.commit('branches', res.data.branches)
+        context.commit('groups', res.data.groups)
+        context.commit('users', res.data.users)
+      } catch (e) {
+        return
+      }
     }
   },
   getters: {
@@ -304,6 +336,9 @@ export default {
     },
     payeeGroup(state) {
       return state.payeeGroup
+    },
+    reports(state) {
+      return state.reports
     },
     staledChecks(state) {
       return state.staledChecks
